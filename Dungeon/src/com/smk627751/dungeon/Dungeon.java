@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Dungeon {
 
-	private int dungeon(char[][] room, int adX, int adY, int goldX, int goldY)
+	private int dungeon(char[][] room, int adX, int adY, int mX, int mY, int goldX, int goldY)
 	{
 		if((adX < 0 || adY > room[0].length) || (adY < 0 || adY > room.length))
 		{
@@ -17,8 +17,15 @@ public class Dungeon {
 			return 0;
 		}
 		room[adX][adY] = 'A';
+		room[mX][mY] = 'M';
 		room[goldX][goldY] = 'G';
-		return (Math.abs(adX - goldX) + Math.abs(adY - goldY));
+		int adG = (Math.abs(adX - goldX) + Math.abs(adY - goldY));
+		int mG = (Math.abs(mX - goldX) + Math.abs(mY - goldY));
+		if(adG <= mG)
+		{
+			return adG;
+		}
+		return 0;
 	}
 	public static void main(String[] args) {
 		Dungeon obj = new Dungeon();
@@ -28,10 +35,14 @@ public class Dungeon {
 		System.out.println("Position of adventurer: ");
 		int adX = sc.nextInt() - 1;
 		int adY = sc.nextInt() - 1;
+		System.out.println("Position of Monster: ");
+		int mX = sc.nextInt() - 1;
+		int mY = sc.nextInt() - 1;
 		System.out.println("Position of gold: ");
 		int goldX = sc.nextInt() - 1;
 		int goldY = sc.nextInt() - 1;
-		int min = obj.dungeon(room, adX, adY, goldX, goldY);
+		sc.close();
+		int min = obj.dungeon(room, adX, adY, mX, mY, goldX, goldY);
 		for(char[] a: room)
 		{
 			for(char n : a)
@@ -40,7 +51,14 @@ public class Dungeon {
 			}
 			System.out.println();
 		}
-		System.out.println("Minimum number of steps: "+ min);
+		if(min == 0)
+		{
+			System.out.println("No possible solution");
+		}
+		else
+		{
+			System.out.println("Minimum number of steps: "+ min);
+		}
 	}
 
 }
