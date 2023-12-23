@@ -6,7 +6,105 @@ import java.util.Scanner;
 
 public class Dungeon {
 
-	private int dungeon(char[][] room, int adX, int adY, int mX, int mY, int goldX, int goldY, List<List<Integer>> list)
+	private void path(List<List<Integer>> list, int startX, int startY, int endX, int endY)
+	{
+		if(startX < endX)
+		{
+			while(true)
+			{
+				List<Integer> l = new ArrayList<>();
+				l.add((startX + 1));
+				l.add((startY + 1));
+				if(!list.contains(l))
+				{
+					list.add(l);
+				}
+				if(startY == endY)
+				{
+					break;
+				}
+				if(startY < endY)
+				{
+					startY++;
+				}
+				if(startY > endY)
+				{
+					startY--;
+				}
+			}
+			while(true)
+			{
+				List<Integer> l = new ArrayList<>();
+				l.add((startX + 1));
+				l.add((startY + 1));
+				if(!list.contains(l))
+				{
+					list.add(l);
+				}
+				if(startX == endX)
+				{
+					break;
+				}
+				if(startX < endX)
+				{
+					startX++;
+				}
+				if(startX > endX)
+				{
+					startX--;
+				}
+			}
+			
+			}
+		else
+		{
+			while(true)
+			{
+				List<Integer> l = new ArrayList<>();
+				l.add((startX + 1));
+				l.add((startY + 1));
+				if(!list.contains(l))
+				{
+					list.add(l);
+				}
+				if(startX == endX)
+				{
+					break;
+				}
+				if(startX < endX)
+				{
+					startX++;
+				}
+				if(startX > endX)
+				{
+					startX--;
+				}
+			}
+			while(true)
+			{
+				List<Integer> l = new ArrayList<>();
+				l.add((startX + 1));
+				l.add((startY + 1));
+				if(!list.contains(l))
+				{
+					list.add(l);
+				}
+				if(startY == endY)
+				{
+					break;
+				}
+				if(startY < endY)
+				{
+					startY++;
+				}
+				if(startY > endY)
+				{
+					startY--;
+				}
+			}
+		}
+	}
+	private int dungeon(char[][] room, int adX, int adY, int mX, int mY, int tX, int tY, int goldX, int goldY, List<List<Integer>> list)
 	{
 		
 		if((adX < 0 || adY > room[0].length) || (adY < 0 || adY > room.length))
@@ -21,61 +119,32 @@ public class Dungeon {
 		}
 		room[adX][adY] = 'A';
 		room[mX][mY] = 'M';
+		room[tX][tY] = 'T';
 		room[goldX][goldY] = 'G';
 		int adG = (Math.abs(adX - goldX) + Math.abs(adY - goldY));
 		int mG = (Math.abs(mX - goldX) + Math.abs(mY - goldY));
 		int startX = adX, startY = adY, endX = goldX, endY = goldY;
-		while(true)
-		{
-			List<Integer> l = new ArrayList<>();
-			l.add((startX + 1));
-			l.add((startY + 1));
-			if(!list.contains(l))
-			{
-				list.add(l);
-			}
-//			System.out.print("("+(startX + 1)+","+(startY + 1)+")");
-			if(startY == endY)
-			{
-				break;
-			}
-			if(startY < endY)
-			{
-				startY++;
-			}
-			if(startY > endY)
-			{
-				startY--;
-			}
-		}
-		while(true)
-		{
-			List<Integer> l = new ArrayList<>();
-			l.add((startX + 1));
-			l.add((startY + 1));
-			if(!list.contains(l))
-			{
-				list.add(l);
-			}
-//			System.out.print("("+(startX + 1)+","+(startY + 1)+")");
-			if(startX == endX)
-			{
-				break;
-			}
-			if(startX < endX)
-			{
-				startX++;
-			}
-			if(startX > endX)
-			{
-				startX--;
-			}
-		}
+		
 		if(adG <= mG)
 		{
+			path(list, startX, startY, endX, endY);
 			return adG;
 		}
-		return 0;
+		else
+		{
+			List<Integer> l = new ArrayList<>();
+			l.add((startX + 1));
+			l.add((startY + 1));
+			if(!list.contains(l))
+			{
+				list.add(l);
+			}
+			path(list, startX, startY, tX, tY);
+			path(list, tX, tY, endX, endY);
+			adG = (Math.abs(adX - tX) + Math.abs(adY - tY)) + (Math.abs(tX - goldX) + Math.abs(tY - goldY));
+			return adG;
+		}
+		
 	}
 	public static void main(String[] args) {
 		Dungeon obj = new Dungeon();
@@ -89,11 +158,14 @@ public class Dungeon {
 		System.out.println("Position of Monster: ");
 		int mX = sc.nextInt() - 1;
 		int mY = sc.nextInt() - 1;
+		System.out.println("Position of Trigger: ");
+		int tX = sc.nextInt() - 1;
+		int tY = sc.nextInt() - 1;
 		System.out.println("Position of gold: ");
 		int goldX = sc.nextInt() - 1;
 		int goldY = sc.nextInt() - 1;
 		sc.close();
-		int min = obj.dungeon(room, adX, adY, mX, mY, goldX, goldY, list);
+		int min = obj.dungeon(room, adX, adY, mX, mY, tX, tY, goldX, goldY, list);
 		for(char[] a: room)
 		{
 			for(char n : a)
