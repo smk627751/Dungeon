@@ -5,132 +5,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Dungeon {
-
-	private void path(List<List<Integer>> list, int startX, int startY, int endX, int endY)
+	private void leftPath(List<List<Integer>> list, int[][] room, int startX, int startY, int endX, int endY)
 	{
-		if(startX < endX)
-		{
-			while(true)
-			{
-				List<Integer> l = new ArrayList<>();
-				l.add((startX + 1));
-				l.add((startY + 1));
-				if(!list.contains(l))
-				{
-					list.add(l);
-				}
-				if(startY == endY)
-				{
-					break;
-				}
-				if(startY < endY)
-				{
-					startY++;
-				}
-				if(startY > endY)
-				{
-					startY--;
-				}
-			}
-			while(true)
-			{
-				List<Integer> l = new ArrayList<>();
-				l.add((startX + 1));
-				l.add((startY + 1));
-				if(!list.contains(l))
-				{
-					list.add(l);
-				}
-				if(startX == endX)
-				{
-					break;
-				}
-				if(startX < endX)
-				{
-					startX++;
-				}
-				if(startX > endX)
-				{
-					startX--;
-				}
-			}
-			
-			}
-		else
-		{
-			while(true)
-			{
-				List<Integer> l = new ArrayList<>();
-				l.add((startX + 1));
-				l.add((startY + 1));
-				if(!list.contains(l))
-				{
-					list.add(l);
-				}
-				if(startX == endX)
-				{
-					break;
-				}
-				if(startX < endX)
-				{
-					startX++;
-				}
-				if(startX > endX)
-				{
-					startX--;
-				}
-			}
-			while(true)
-			{
-				List<Integer> l = new ArrayList<>();
-				l.add((startX + 1));
-				l.add((startY + 1));
-				if(!list.contains(l))
-				{
-					list.add(l);
-				}
-				if(startY == endY)
-				{
-					break;
-				}
-				if(startY < endY)
-				{
-					startY++;
-				}
-				if(startY > endY)
-				{
-					startY--;
-				}
-			}
-		}
-	}
-	private int dungeon(char[][] room, int adX, int adY, int mX, int mY, int tX, int tY, int goldX, int goldY, List<List<Integer>> list)
-	{
-		
-		if((adX < 0 || adY > room[0].length) || (adY < 0 || adY > room.length))
-		{
-			System.out.println("Adventurer is outside the room");
-			return 0;
-		}
-		if((goldX < 0 || goldY > room[0].length) || (goldY < 0 || goldY > room.length))
-		{
-			System.out.println("gold is outside the room");
-			return 0;
-		}
-		room[adX][adY] = 'A';
-		room[mX][mY] = 'M';
-		room[tX][tY] = 'T';
-		room[goldX][goldY] = 'G';
-		int adG = (Math.abs(adX - goldX) + Math.abs(adY - goldY));
-		int mG = (Math.abs(mX - goldX) + Math.abs(mY - goldY));
-		int startX = adX, startY = adY, endX = goldX, endY = goldY;
-		
-		if(adG <= mG)
-		{
-			path(list, startX, startY, endX, endY);
-			return adG;
-		}
-		else
+		while(startY < room[0].length)
 		{
 			List<Integer> l = new ArrayList<>();
 			l.add((startX + 1));
@@ -139,11 +16,183 @@ public class Dungeon {
 			{
 				list.add(l);
 			}
-			path(list, startX, startY, tX, tY);
-			path(list, tX, tY, endX, endY);
-			adG = (Math.abs(adX - tX) + Math.abs(adY - tY)) + (Math.abs(tX - goldX) + Math.abs(tY - goldY));
-			return adG;
+			if(startY == endY)
+			{
+				break;
+			}
+			if(startY < endY)
+			{
+				if(room[startX][startY + 1] != 'P')
+				startY++;
+				
+				else if(room[startX - 1][startY] != 'P')
+				startX--;
+				
+				else if(room[startX + 1][startY] != 'P')
+				startX++;
+			}
+			if(startY > endY)
+			{
+				if(room[startX][startY - 1] != 'P')
+				startY--;
+				
+				else if(room[startX - 1][startY] != 'P')
+				startX--;
+				
+				else if(room[startX + 1][startY] != 'P')
+				startX++;
+			}
 		}
+		while(startX < room.length)
+		{
+			List<Integer> l = new ArrayList<>();
+			l.add((startX + 1));
+			l.add((startY + 1));
+			if(!list.contains(l))
+			{
+				list.add(l);
+			}
+			if(startX == endX)
+			{
+				break;
+			}
+			if(startX < endX)
+			{
+				if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
+				startX++;
+				
+				else if(startY + 1 < room[0].length && room[startX][startY + 1] != 'P')
+				startY++;
+				
+				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
+				startY--;
+			}
+			if(startX > endX)
+			{
+				if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
+				startX--;
+				
+				else if(startY + 1 < room[0].length && room[startX][startY + 1] != 'P')
+				startY++;
+				
+				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
+				startY--;
+			}
+		}
+		
+	}
+	
+	private void rightPath(List<List<Integer>> list, int[][] room, int startX, int startY, int endX, int endY)
+	{
+		while(startX < room.length)
+		{
+			List<Integer> l = new ArrayList<>();
+			l.add((startX + 1));
+			l.add((startY + 1));
+			if(!list.contains(l))
+			{
+				list.add(l);
+			}
+			if(startX == endX)
+			{
+				break;
+			}
+			if(startX < endX)
+			{
+				if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
+					startX++;
+					
+				else if(startY + 1 < room[0].length && room[startX][startY + 1] != 'P')
+				startY++;
+				
+				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
+				startY--;
+			}
+			if(startX > endX)
+			{
+				if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
+					startX--;
+					
+				else if(startY + 1 < room[0].length && room[startX][startY + 1] != 'P')
+				startY++;
+				
+				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
+				startY--;
+			}
+		}
+		while(startY < room[0].length)
+		{
+			List<Integer> l = new ArrayList<>();
+			l.add((startX + 1));
+			l.add((startY + 1));
+			if(!list.contains(l))
+			{
+				list.add(l);
+			}
+			if(startY == endY)
+			{
+				break;
+			}
+			if(startY < endY)
+			{
+				if(startY + 1 < room[0].length &&room[startX][startY + 1] != 'P')
+					startY++;
+					
+				else if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
+				startX--;
+				
+				else if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
+				startX++;
+			}
+			if(startY > endY)
+			{
+				if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
+					startY--;
+					
+				else if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
+				startX--;
+				
+				else if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
+				startX++;
+			}
+		}
+	}
+	private void path(List<List<Integer>> list, int[][] room, int startX, int startY, int endX, int endY)
+	{
+		if((startX + 1 < room.length && room[startX + 1][startY] == 'P') || (startX - 1 >= 0 && room[startX - 1][startY] == 'P') 
+				|| (startY + 1 < room[0].length && room[startX][startY + 1] == 'P') || (startY - 1 >= 0 && room[startX][startY - 1] == 'P'))
+		{
+			return;
+		}
+		if(startX < endX)
+		{
+			leftPath(list, room, startX, startY, endX, endY);
+		}
+		else
+		{
+			rightPath(list, room, startX, startY, endX, endY);
+		}
+	}
+	
+	private void dungeon(int[][] room, int adX, int adY, int goldX, int goldY, List<List<Integer>> list)
+	{
+		
+		if((adX < 0 || adY > room[0].length) || (adY < 0 || adY > room.length))
+		{
+			System.out.println("Adventurer is outside the room");
+			return;
+		}
+		if((goldX < 0 || goldY > room[0].length) || (goldY < 0 || goldY > room.length))
+		{
+			System.out.println("gold is outside the room");
+			return;
+		}
+		room[adX][adY] = 'A';
+		room[goldX][goldY] = 'G';
+		
+		int startX = adX, startY = adY, endX = goldX, endY = goldY;
+
+		path(list, room, startX, startY, endX, endY);
 		
 	}
 	public static void main(String[] args) {
@@ -151,30 +200,24 @@ public class Dungeon {
 		List<List<Integer>> list = new ArrayList<>();
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Dimensions of the dungeon(Row x Column): ");
-		char[][] room = new char[sc.nextInt()][sc.nextInt()];
+		int[][] room = new int[sc.nextInt()][sc.nextInt()];
 		System.out.println("Position of adventurer: ");
 		int adX = sc.nextInt() - 1;
 		int adY = sc.nextInt() - 1;
-		System.out.println("Position of Monster: ");
-		int mX = sc.nextInt() - 1;
-		int mY = sc.nextInt() - 1;
-		System.out.println("Position of Trigger: ");
-		int tX = sc.nextInt() - 1;
-		int tY = sc.nextInt() - 1;
 		System.out.println("Position of gold: ");
 		int goldX = sc.nextInt() - 1;
 		int goldY = sc.nextInt() - 1;
-		sc.close();
-		int min = obj.dungeon(room, adX, adY, mX, mY, tX, tY, goldX, goldY, list);
-		for(char[] a: room)
+		System.out.println("Enter the number of pits: ");
+		int pits = sc.nextInt();
+		for(int i = 0; i < pits; i++)
 		{
-			for(char n : a)
-			{
-				System.out.print(n+" ");
-			}
-			System.out.println();
+			System.out.println("Position of pit "+(i + 1)+": ");
+			room[sc.nextInt() - 1][sc.nextInt() - 1] = 'P';
 		}
-		if(min == 0)
+		sc.close();
+		obj.dungeon(room, adX, adY, goldX, goldY,list);
+		int min = list.size() - 1;
+		if(min <= 0)
 		{
 			System.out.println("No possible solution");
 		}
@@ -186,7 +229,7 @@ public class Dungeon {
 			{
 				System.out.print("("+list.get(i).get(0)+","+list.get(i).get(1)+")->");
 			}
-			System.out.print("("+list.get(list.size() - 1).get(0)+","+list.get(list.size() - 1).get(1)+")");
+			System.out.print("("+list.get(min).get(0)+","+list.get(min).get(1)+")");
 		}
 	}
 
