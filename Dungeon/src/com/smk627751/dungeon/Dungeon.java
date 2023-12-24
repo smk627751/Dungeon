@@ -25,22 +25,26 @@ public class Dungeon {
 				if(isMonster || room[startX][startY + 1] != 'P')
 				startY++;
 				
+				else if(room[startX + 1][startY] != 'P')
+				startX++;
+				
 				else if(room[startX - 1][startY] != 'P')
 				startX--;
 				
-				else if(room[startX + 1][startY] != 'P')
-				startX++;
+				else return;
 			}
 			if(startY > endY)
 			{
 				if(isMonster || room[startX][startY - 1] != 'P')
 				startY--;
 				
+				else if(room[startX + 1][startY] != 'P')
+				startX++;
+				
 				else if(room[startX - 1][startY] != 'P')
 				startX--;
 				
-				else if(room[startX + 1][startY] != 'P')
-				startX++;
+				else return;
 			}
 		}
 		while(startX < room.length)
@@ -66,6 +70,8 @@ public class Dungeon {
 				
 				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
 				startY--;
+				
+				else return;
 			}
 			if(startX > endX)
 			{
@@ -77,6 +83,8 @@ public class Dungeon {
 				
 				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
 				startY--;
+				
+				else return;
 			}
 		}
 		
@@ -107,6 +115,8 @@ public class Dungeon {
 				
 				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
 				startY--;
+				
+				else return;
 			}
 			if(startX > endX)
 			{
@@ -118,6 +128,8 @@ public class Dungeon {
 				
 				else if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
 				startY--;
+				
+				else return;
 			}
 		}
 		while(startY < room[0].length)
@@ -136,35 +148,33 @@ public class Dungeon {
 			if(startY < endY)
 			{
 				if(startY + 1 < room[0].length &&room[startX][startY + 1] != 'P')
-					startY++;
+				startY++;
 					
+				else if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
+				startX++;
+				
 				else if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
 				startX--;
 				
-				else if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
-				startX++;
+				else return;
 			}
 			if(startY > endY)
 			{
 				if(startY - 1 >= 0 && room[startX][startY - 1] != 'P')
-					startY--;
-					
-				else if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
-				startX--;
+				startY--;
 				
 				else if(startX + 1 < room.length && room[startX + 1][startY] != 'P')
 				startX++;
+				
+				else if(startX - 1 >= 0 && room[startX - 1][startY] != 'P')
+				startX--;
+				
+				else return;
 			}
 		}
 	}
 	private void path(List<List<Integer>> list, int[][] room, boolean isMonster, int startX, int startY, int endX, int endY)
 	{
-		if((startX + 1 < room.length && room[startX + 1][startY] == 'P') || (startX - 1 >= 0 && room[startX - 1][startY] == 'P') 
-				|| (startY + 1 < room[0].length && room[startX][startY + 1] == 'P') || (startY - 1 >= 0 && room[startX][startY - 1] == 'P'))
-		{
-			if(!isMonster)
-			return;
-		}
 		if(startX < endX)
 		{
 			leftPath(list, room, isMonster, startX, startY, endX, endY);
@@ -175,21 +185,19 @@ public class Dungeon {
 		}
 	}
 	
-	private void dungeon(int[][] room, boolean isMonster, int adX, int adY, int goldX, int goldY, List<List<Integer>> list)
+	private void dungeon(int[][] room, boolean isMonster, int startX, int startY, int endX, int endY, List<List<Integer>> list)
 	{
 		
-		if((adX < 0 || adY > room[0].length) || (adY < 0 || adY > room.length))
+		if((startX < 0 || startY > room[0].length) || (startY < 0 || startY > room.length))
 		{
 			System.out.println("Adventurer is outside the room");
 			return;
 		}
-		if((goldX < 0 || goldY > room[0].length) || (goldY < 0 || goldY > room.length))
+		if((endX < 0 || endY > room[0].length) || (endY < 0 || endY > room.length))
 		{
 			System.out.println("gold is outside the room");
 			return;
 		}
-		
-		int startX = adX, startY = adY, endX = goldX, endY = goldY;
 
 		path(list, room, isMonster, startX, startY, endX, endY);
 		
@@ -207,6 +215,9 @@ public class Dungeon {
 		System.out.println("Position of Monster: ");
 		int mX = sc.nextInt() - 1;
 		int mY = sc.nextInt() - 1;
+		System.out.println("Position of Trigger: ");
+		int tX = sc.nextInt() - 1;
+		int tY = sc.nextInt() - 1;
 		System.out.println("Position of gold: ");
 		int goldX = sc.nextInt() - 1;
 		int goldY = sc.nextInt() - 1;
@@ -247,7 +258,20 @@ public class Dungeon {
 		
 		else
 		{
-			System.out.println("No possible solution");
+			adPath.clear();
+			mPath.clear();
+			obj.dungeon(room, false, adX, adY, tX, tY,adPath);
+			obj.dungeon(room, false, tX, tY, goldX, goldY,adPath);
+			
+			adMin = adPath.size() - 1;
+			System.out.println("Minimum number of steps: "+ adMin);
+			
+			System.out.print("Adventurer Path: ");
+			for(int i = 0; i < adPath.size() - 1; i++)
+			{
+				System.out.print("("+adPath.get(i).get(0)+","+adPath.get(i).get(1)+")->");
+			}
+			System.out.print("("+adPath.get(adMin).get(0)+","+adPath.get(adMin).get(1)+")\n");
 		}
 	}
 
